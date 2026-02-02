@@ -1,0 +1,84 @@
+package usecase
+
+import (
+	"clean/internal/entity"
+	"clean/internal/repository"
+	"errors"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+)
+
+type AuthUsecase interface {
+	Login(email, password string) (string, error)
+	Register(username, email, password string) error
+}
+
+type authUseCase struct {
+	repo      repository.UserRepo
+	jwtSecret string
+}
+
+func NewAuthUsecase(repo repository.UserRepo, jwtSecret string) AuthUsecase {
+	return &authUseCase{
+		repo:      repo,
+		jwtSecret: jwtSecret,
+	}
+}
+
+func (uc *authUseCase) Login(email string, password string) (string, error) {
+	user, err := uc.repo.GetByEmail(email)
+	if err != nil {
+		return "", errors.New("email not found")
+	}
+
+	if err := bcrypt.CompareHashAndPassword(
+		[]byte(user.Password),
+		[]byte(password),
+	); err != nil {
+		return "", errors.New("invalid password")
+	}
+
+	claims := jwt.MapClaims{
+		"user_id": user.ID,
+		"email":   user.Email,
+		"exp":     time.Now().Add(72 * time.Hour).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	signedToken, err := token.SignedString([]byte(uc.jwtSecret))
+	if err != nil {
+		return "", errors.New("failed to sign token")
+	}
+
+	return signedToken, nil
+}
+
+func (uc *authUseCase) Register(username, email, password string) error {
+	existingUser, err := uc.repo.GetByEmail(email)
+	if err == nil && existingUser != nil {
+		return errors.New("email already exists")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		return errors.New("failed to hash password")
+	}
+
+	user := &entity.User{
+		Username: username,
+		Email:    email,
+		Password: string(hashedPassword),
+	}
+
+	if err := uc.repo.Create(user); err != nil {
+		return err
+	}
+
+	return nil
+}

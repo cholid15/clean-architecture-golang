@@ -30,14 +30,19 @@ migrate -database "postgres://postgres:1950@localhost:5432/meeting_room?sslmode=
 
 <!-- 5. kondeksi daatabase itu buat file .env dan buat folder pgsql di folder insfratucture -->
 
-# 1. Pastikan air sudah terinstall
+<!-- # 1. Pastikan air sudah terinstall -->
 
 scoop install air
 
-# atau
+<!-- # atau -->
 
 go install github.com/cosmtrek/air@latest
 
-# 2. Di root project Anda, jalankan:
+<!-- # 2. Di root project Anda, jalankan: -->
 
 air init
+
+<!-- membuat auth jtw login dan register  -->
+<!-- install jwt -->
+
+go get -u "github.com/golang-jwt/jwt/v5"
