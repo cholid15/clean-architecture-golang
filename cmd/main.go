@@ -1,35 +1,40 @@
 package main
 
 import (
+	"clean/internal/delivery/http/handler"
 	"clean/internal/infrastructure/pgsql"
+	"clean/internal/usecase"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Application entry point
-
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Println("Env Variable failed to load")
-	}
-
+	// load env
+	_ = godotenv.Load()
 	log.Println("Env Variable loaded successfully")
 
-	pgdb, err := pgsql.Init()
+	// init db
+	db, err := pgsql.Init()
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
-	if pgdb != nil {
-		log.Println("Database initialized successfully")
-	}
+	log.Println("Database initialized successfully")
 
-	r := gin.Default();
+	// gin
+	r := gin.Default()
+
+	// ===== WIRING (BENAR) =====
+	userRepo := pgsql.NewUserRepoPG(db)
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	authUC := usecase.NewAuthUsecase(userRepo, jwtSecret)
+
+	handler.NewAuthHandler(r, authUC)
+	// =========================
 
 	log.Println("Starting the server on port 8080...")
 	r.Run(":8080")
-	
 }

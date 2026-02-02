@@ -30,7 +30,7 @@ func NewAuthUsecase(repo repository.UserRepo, jwtSecret string) AuthUsecase {
 func (uc *authUseCase) Login(email string, password string) (string, error) {
 	user, err := uc.repo.GetByEmail(email)
 	if err != nil {
-		return "", errors.New("email not found")
+		return "", errors.New(err.Error())
 	}
 
 	if err := bcrypt.CompareHashAndPassword(
