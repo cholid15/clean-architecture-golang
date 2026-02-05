@@ -7,4 +7,6 @@ type UserRepo interface {
 	GetByEmail(email string) (*entity.User, error)
 	GetById(id int) (*entity.User, error)
 	Create(user *entity.User) error
+	AssignRole(userID, roleID int) error
+	GetUserWithRolesAndPermissions(userID int) (*entity.UserWithRoles, error)
 }

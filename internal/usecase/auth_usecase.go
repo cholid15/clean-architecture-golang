@@ -12,7 +12,7 @@ import (
 
 type AuthUsecase interface {
 	Login(email, password string) (string, error)
-	Register(username, email, password string) error
+	Register(username, email, password string, roleIds []int) error
 }
 
 type authUseCase struct {
@@ -56,7 +56,7 @@ func (uc *authUseCase) Login(email string, password string) (string, error) {
 	return signedToken, nil
 }
 
-func (uc *authUseCase) Register(username, email, password string) error {
+func (uc *authUseCase) Register(username, email, password string, roleIds []int) error {
 	// Validate inputs are not empty
 	if username == "" || email == "" || password == "" {
 		return errors.New("username, email, and password cannot be empty")
@@ -88,6 +88,15 @@ func (uc *authUseCase) Register(username, email, password string) error {
 
 	if err := uc.repo.Create(user); err != nil {
 		return err
+	}
+
+	// Assign roles to the newly created user
+	if len(roleIds) > 0 {
+		for _, roleID := range roleIds {
+			if err := uc.repo.AssignRole(user.ID, roleID); err != nil {
+				return errors.New("failed to assign role: " + err.Error())
+			}
+		}
 	}
 
 	return nil

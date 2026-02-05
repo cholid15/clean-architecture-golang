@@ -16,6 +16,7 @@ type RegisterParams struct {
 	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
+	RoleIds  []int  `json:"role_ids" binding:""` // Optional: assign roles during registration
 }
 
 // parameter login - ONLY accepts these fields

@@ -43,6 +43,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		req.Username,
 		req.Email,
 		req.Password,
+		req.RoleIds,
 	)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

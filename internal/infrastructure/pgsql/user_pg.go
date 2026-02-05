@@ -93,3 +93,136 @@ func (r *userRepo) Create(user *entity.User) error {
     
     return err
 }
+
+// ========================
+// ASSIGN ROLE TO USER
+// ========================
+func (r *userRepo) AssignRole(userID, roleID int) error {
+    query := `
+        INSERT INTO user_roles (user_id, role_id, created_at)
+        VALUES ($1, $2, CURRENT_TIMESTAMP)
+        ON CONFLICT (user_id, role_id) DO NOTHING
+    `
+    
+    _, err := r.db.Exec(query, userID, roleID)
+    return err
+}
+
+// ========================
+// GET USER WITH ROLES AND PERMISSIONS
+// ========================
+func (r *userRepo) GetUserWithRolesAndPermissions(userID int) (*entity.UserWithRoles, error) {
+	// Get user basic info
+	user := &entity.User{}
+	err := r.db.Get(user, `
+		SELECT id, username, email
+		FROM users
+		WHERE id = $1
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get user roles with their permissions
+	query := `
+		SELECT 
+			r.id,
+			r.name,
+			r.description,
+			r.created_at,
+			r.updated_at,
+			p.id as permission_id,
+			p.name as permission_name,
+			p.code,
+			p.module,
+			p.description as permission_description,
+			p.created_at as permission_created_at
+		FROM roles r
+		LEFT JOIN user_roles ur ON r.id = ur.role_id
+		LEFT JOIN role_permissions rp ON r.id = rp.role_id
+		LEFT JOIN permissions p ON rp.permission_id = p.id
+		WHERE ur.user_id = $1
+		ORDER BY r.id, p.id
+	`
+
+	rows, err := r.db.Queryx(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Map to store roles and their permissions
+	rolesMap := make(map[int]*entity.Role)
+	var roleOrder []int
+
+	for rows.Next() {
+		var roleID int
+		var roleName string
+		var roleDesc sql.NullString
+		var roleCreatedAt time.Time
+		var roleUpdatedAt time.Time
+		var permID sql.NullInt64
+		var permName sql.NullString
+		var permCode sql.NullString
+		var permModule sql.NullString
+		var permDesc sql.NullString
+		var permCreatedAt sql.NullTime
+
+		err := rows.Scan(
+			&roleID,
+			&roleName,
+			&roleDesc,
+			&roleCreatedAt,
+			&roleUpdatedAt,
+			&permID,
+			&permName,
+			&permCode,
+			&permModule,
+			&permDesc,
+			&permCreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Initialize role if not exists
+		if _, ok := rolesMap[roleID]; !ok {
+			rolesMap[roleID] = &entity.Role{
+				ID:          roleID,
+				Name:        roleName,
+				Description: roleDesc.String,
+				CreatedAt:   roleCreatedAt,
+				UpdatedAt:   roleUpdatedAt,
+				Permissions: []entity.Permission{},
+			}
+			roleOrder = append(roleOrder, roleID)
+		}
+
+		// Add permission if exists
+		if permID.Valid {
+			perm := entity.Permission{
+				ID:          int(permID.Int64),
+				Name:        permName.String,
+				Code:        permCode.String,
+				Module:      permModule.String,
+				Description: permDesc.String,
+				CreatedAt:   permCreatedAt.Time,
+			}
+			rolesMap[roleID].Permissions = append(rolesMap[roleID].Permissions, perm)
+		}
+	}
+
+	// Build final roles array in order
+	var roles []entity.Role
+	for _, id := range roleOrder {
+		roles = append(roles, *rolesMap[id])
+	}
+
+	// Return user with roles
+	return &entity.UserWithRoles{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Roles:    roles,
+	}, nil
+}
