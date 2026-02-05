@@ -32,6 +32,8 @@ migrate -database "postgres://postgres:1950@localhost:5432/meeting_room?sslmode=
 
 <!-- # 1. Pastikan air sudah terinstall -->
 
+<!-- scoop digunakan untuk membuat migrations -->
+
 scoop install air
 
 <!-- # atau -->
@@ -46,3 +48,10 @@ air init
 <!-- install jwt -->
 
 go get -u "github.com/golang-jwt/jwt/v5"
+
+<!-- next step -->
+<!--
+1. Implementasi JWT
+2. Implementasi User Role dan Permission
+3. Implementasi All user da Single User
+ -->

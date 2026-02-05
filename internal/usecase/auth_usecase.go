@@ -57,11 +57,18 @@ func (uc *authUseCase) Login(email string, password string) (string, error) {
 }
 
 func (uc *authUseCase) Register(username, email, password string) error {
+	// Validate inputs are not empty
+	if username == "" || email == "" || password == "" {
+		return errors.New("username, email, and password cannot be empty")
+	}
+
+	// Check if user already exists
 	existingUser, err := uc.repo.GetByEmail(email)
 	if err == nil && existingUser != nil {
 		return errors.New("email already exists")
 	}
 
+	// Generate password hash
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
 		bcrypt.DefaultCost,
@@ -70,10 +77,13 @@ func (uc *authUseCase) Register(username, email, password string) error {
 		return errors.New("failed to hash password")
 	}
 
+	// Create user object - NO ID, let database generate it
 	user := &entity.User{
 		Username: username,
 		Email:    email,
 		Password: string(hashedPassword),
+		// ID is NOT set - database will auto-generate via SERIAL
+		// CreatedAt and UpdatedAt are set by database DEFAULT
 	}
 
 	if err := uc.repo.Create(user); err != nil {

@@ -12,49 +12,69 @@ type AuthHandler struct {
 	uc usecase.AuthUsecase
 }
 
-func NewAuthHandler(r *gin.Engine, uc usecase.AuthUsecase) { 
-	h := &AuthHandler{uc}
+func NewAuthHandler(r *gin.Engine, uc usecase.AuthUsecase) {
+	h := &AuthHandler{uc: uc}
 
 	r.POST("/register", h.Register)
 	r.POST("/login", h.Login)
 }
 
-
-// Register User
 func (h *AuthHandler) Register(c *gin.Context) {
-	var params entity.RegisterParams
+	// ✅ GUNAKAN DTO YANG BENAR - JANGAN MENERIMA ID
+	var req entity.RegisterParams
 
-	err := c.ShouldBindBodyWithJSON(&params)
+	// Explicit binding to prevent extra fields
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Validate input manually for better error messages
+	if req.Username == "" || req.Email == "" || req.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "username, email, and password are required",
+		})
+		return
+	}
+
+	err := h.uc.Register(
+		req.Username,
+		req.Email,
+		req.Password,
+	)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
-	 }
+	}
 
-	 err = h.uc.Register(params.Username, params.Email, params.Password) 
-	 if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	 }
-
-	 c.JSON(http.StatusCreated, gin.H{"message": "user registered successfully"})
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "register success",
+	})
 }
 
-
-// Login User
 func (h *AuthHandler) Login(c *gin.Context) {
-	var params entity.LoginParams
+	var req entity.LoginParams
 
-	err := c.ShouldBindBodyWithJSON(&params)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	token, err := h.uc.Login(req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
 		return
-	 }
+	}
 
-	 token, err := h.uc.Login(params.Email, params.Password) 
-	 if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	 }
-
-	 c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+	})
 }
