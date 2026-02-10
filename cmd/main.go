@@ -27,7 +27,9 @@ func main() {
 	// gin
 	r := gin.Default()
 
-	// ===== WIRING (BENAR) =====
+	// =========================
+	// USER & AUTH (EXISTING)
+	// =========================
 	userRepo := pgsql.NewUserRepoPG(db)
 
 	jwtSecret := os.Getenv("JWT_SECRET")
@@ -38,10 +40,41 @@ func main() {
 
 	// User routes (protected)
 	userHandler := handler.NewUserHandler(r, userRepo)
-	r.GET("/profile", middleware.JWTMiddleware(jwtSecret), userHandler.GetProfile)
+	r.GET("/profile",
+		middleware.JWTMiddleware(jwtSecret),
+		userHandler.GetProfile,
+	)
+
 	// =========================
+	// ROOM
+	// =========================
+	roomRepo := pgsql.NewRoomRepo(db)
+	roomUC := usecase.NewRoomUsecase(roomRepo)
+	roomHandler := handler.NewRoomHandler(roomUC)
+
+	room := r.Group("/rooms", middleware.JWTMiddleware(jwtSecret))
+	{
+		room.POST("", roomHandler.Create)
+		room.GET("all", roomHandler.GetAll)
+		room.PUT("/:id", roomHandler.Update)
+		room.DELETE("/:id", roomHandler.Delete)
+	}
+
+	// =========================
+	// BOOKING
+	// =========================
+	bookingRepo := pgsql.NewBookingRepo(db)
+	bookingUC := usecase.NewBookingUsecase(bookingRepo)
+	bookingHandler := handler.NewBookingHandler(bookingUC)
+
+	booking := r.Group("/bookings", middleware.JWTMiddleware(jwtSecret))
+	{
+		booking.POST("", bookingHandler.Create)
+		booking.GET("all", bookingHandler.GetAll)
+		booking.PUT("/:id", bookingHandler.Update)
+		booking.DELETE("/:id", bookingHandler.Delete)
+	}
 
 	log.Println("Starting the server on port 8080...")
 	r.Run(":8080")
 }
-
