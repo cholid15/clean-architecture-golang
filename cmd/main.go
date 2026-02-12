@@ -5,24 +5,33 @@ import (
 	"clean/internal/delivery/http/middleware"
 	"clean/internal/infrastructure/pgsql"
 	"clean/internal/usecase"
-	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	// logger
+	"clean/pkg/logger"
 )
 
 func main() {
+	// init logger
+	logger.Init()
+	logger.InfoLogger.Println("Application starting...")
+
 	// load env
-	_ = godotenv.Load()
-	log.Println("Env Variable loaded successfully")
+	if err := godotenv.Load(); err != nil {
+		logger.ErrorLogger.Println("Failed to load .env file")
+	} else {
+		logger.InfoLogger.Println("Env Variable loaded successfully")
+	}
 
 	// init db
 	db, err := pgsql.Init()
 	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
+		logger.ErrorLogger.Fatalf("Failed to initialize database: %v", err)
 	}
-	log.Println("Database initialized successfully")
+	logger.InfoLogger.Println("Database initialized successfully")
 
 	// gin
 	r := gin.Default()
@@ -75,6 +84,8 @@ func main() {
 		booking.DELETE("/:id", bookingHandler.Delete)
 	}
 
-	log.Println("Starting the server on port 8080...")
-	r.Run(":8080")
+	logger.InfoLogger.Println("Starting the server on port 8080...")
+	if err := r.Run(":8080"); err != nil {
+		logger.ErrorLogger.Fatalf("Server failed to start: %v", err)
+	}
 }

@@ -3,6 +3,9 @@ package usecase
 import (
 	"clean/internal/entity"
 	"clean/internal/repository"
+	"clean/pkg/logger"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"time"
 
@@ -13,6 +16,8 @@ import (
 type AuthUsecase interface {
 	Login(email, password string) (string, error)
 	Register(username, email, password string, roleIds []int) error
+	ForgotPassword(email string) error
+	ResetPassword(token, newPassword string) error
 }
 
 type authUseCase struct {
@@ -100,4 +105,62 @@ func (uc *authUseCase) Register(username, email, password string, roleIds []int)
 	}
 
 	return nil
+}
+
+
+// lupa password
+
+func generateRandomToken() (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
+}
+
+func (uc *authUseCase) ForgotPassword(email string) error {
+	user, err := uc.repo.GetByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	token, err := generateRandomToken()
+	if err != nil {
+		return err
+	}
+
+	expiry := time.Now().Add(15 * time.Minute)
+
+	err = uc.repo.SaveResetToken(user.ID, token, expiry)
+	if err != nil {
+		return err
+	}
+
+	logger.InfoLogger.Println("Reset token for", email, ":", token)
+
+	return nil
+}
+
+func (uc *authUseCase) ResetPassword(token string, newPassword string) error {
+	user, err := uc.repo.GetByResetToken(token)
+	if err != nil {
+		return err
+	}
+
+	if user.ResetTokenExpiry == nil || time.Now().After(*user.ResetTokenExpiry) {
+		return errors.New("token expired")
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	err = uc.repo.UpdatePassword(user.ID, string(hashed))
+	if err != nil {
+		return err
+	}
+
+	return uc.repo.ClearResetToken(user.ID)
 }

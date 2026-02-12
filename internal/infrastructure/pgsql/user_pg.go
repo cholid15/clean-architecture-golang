@@ -226,3 +226,48 @@ func (r *userRepo) GetUserWithRolesAndPermissions(userID int) (*entity.UserWithR
 		Roles:    roles,
 	}, nil
 }
+
+// reset password
+func (r *userRepo) SaveResetToken(userID int, token string, expiry time.Time) error {
+	query := `
+	UPDATE users 
+	SET reset_token=$1, reset_token_expiry=$2 WHERE id=$3
+	`
+	_, err := r.db.Exec(query, token, expiry, userID)
+	return err
+}
+
+func (r *userRepo) GetByResetToken(token string) (*entity.User, error) {
+	var user entity.User
+	query := `
+	SELECT * FROM users
+	WHERE reset_token=$1
+	`
+
+	err := r.db.Get(&user, query, token)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *userRepo) UpdatePassword(userID int, hashedpassword string) error {
+	query := `
+	UPDATE users Set password=$1, updated_at=NOW()
+	WHERE id=$2
+	`
+
+	_, err := r.db.Exec(query, hashedpassword, userID)
+	return err
+}
+
+func (r *userRepo) ClearResetToken(userID int) error {
+	query := `
+	UPDATE users SET reset_token=NULL, reset_token_expiry=NULL
+	WHERE id=$1	
+	`
+
+	_, err := r.db.Exec(query,userID)
+	return err
+}
