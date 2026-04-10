@@ -1,0 +1,24 @@
+INFO: 2026/04/10 11:11:27 Login success: herda@gmail.com
+INFO: 2026/04/10 11:11:27 POST /login | 200 | 100.9388ms
+INFO: 2026/04/10 13:08:56 Login success: herda@gmail.com
+INFO: 2026/04/10 13:08:56 POST /login | 200 | 93.9007ms
+INFO: 2026/04/10 13:09:23 GET /rooms/all | 200 | 14.5996ms
+INFO: 2026/04/10 13:09:23 GET /rooms/all | 200 | 71.9096ms
+INFO: 2026/04/10 13:09:27 Login success: herda@gmail.com
+INFO: 2026/04/10 13:09:27 POST /login | 200 | 90.3392ms
+INFO: 2026/04/10 13:09:34 Login success: herda@gmail.com
+INFO: 2026/04/10 13:09:34 POST /login | 200 | 85.4269ms
+INFO: 2026/04/10 13:09:39 GET /rooms/all | 200 | 1.0171ms
+INFO: 2026/04/10 13:09:39 GET /rooms/all | 200 | 1.5827ms
+INFO: 2026/04/10 13:12:35 Login success: herda@gmail.com
+INFO: 2026/04/10 13:12:35 POST /login | 200 | 95.2434ms
+INFO: 2026/04/10 13:12:35 GET /profile | 200 | 41.5468ms
+INFO: 2026/04/10 13:12:35 GET /profile | 200 | 41.5468ms
+INFO: 2026/04/10 13:12:35 GET /rooms/all | 200 | 67.2231ms
+INFO: 2026/04/10 13:12:35 GET /rooms/all | 200 | 511.6µs
+INFO: 2026/04/10 13:12:52 Login success: herda@gmail.com
+INFO: 2026/04/10 13:12:52 POST /login | 200 | 97.1807ms
+INFO: 2026/04/10 13:12:52 GET /rooms/all | 200 | 3.8313ms
+INFO: 2026/04/10 13:12:52 GET /profile | 200 | 7.361ms
+INFO: 2026/04/10 13:12:52 GET /rooms/all | 200 | 515.3µs
+INFO: 2026/04/10 13:12:52 GET /profile | 200 | 1.2325ms

@@ -15,39 +15,42 @@ import (
 )
 
 func main() {
-	// init logger
+	// 1. Initialize Logger
 	logger.Init()
 	logger.InfoLogger.Println("Application starting...")
 
-	// load env
+	// 2. Load Environment Variables
 	if err := godotenv.Load(); err != nil {
 		logger.ErrorLogger.Println("Failed to load .env file")
 	} else {
 		logger.InfoLogger.Println("Env Variable loaded successfully")
 	}
 
-	// init db
+	// 3. Initialize Database
 	db, err := pgsql.Init()
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Failed to initialize database: %v", err)
 	}
 	logger.InfoLogger.Println("Database initialized successfully")
 
-	// gin
+	// 4. Initialize Gin Engine
 	r := gin.Default()
 
-	// =========================
-	// USER & AUTH (EXISTING)
-	// =========================
-	userRepo := pgsql.NewUserRepoPG(db)
+	// 5. GLOBAL MIDDLEWARE (Sangat Penting: Taruh di atas sebelum route)
+	// Memastikan semua request (termasuk OPTIONS/Preflight) diizinkan
+	r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.LoggerMiddleware())
 
+	// 6. Setup Repositories & Usecases
+	userRepo := pgsql.NewUserRepoPG(db)
 	jwtSecret := os.Getenv("JWT_SECRET")
 	authUC := usecase.NewAuthUsecase(userRepo, jwtSecret)
 
-	// Auth routes (public)
+	// 7. PUBLIC ROUTES
+	// Register Auth Handler (Login, Register, dsb)
 	handler.NewAuthHandler(r, authUC)
 
-	// User routes (protected)
+	// 8. PROTECTED ROUTES (Membutuhkan JWT)
 	userHandler := handler.NewUserHandler(r, userRepo)
 	r.GET("/profile",
 		middleware.JWTMiddleware(jwtSecret),
@@ -55,7 +58,7 @@ func main() {
 	)
 
 	// =========================
-	// ROOM
+	// ROOM MODULE
 	// =========================
 	roomRepo := pgsql.NewRoomRepo(db)
 	roomUC := usecase.NewRoomUsecase(roomRepo)
@@ -70,7 +73,7 @@ func main() {
 	}
 
 	// =========================
-	// BOOKING
+	// BOOKING MODULE
 	// =========================
 	bookingRepo := pgsql.NewBookingRepo(db)
 	bookingUC := usecase.NewBookingUsecase(bookingRepo)
@@ -84,8 +87,14 @@ func main() {
 		booking.DELETE("/:id", bookingHandler.Delete)
 	}
 
-	logger.InfoLogger.Println("Starting the server on port 8080...")
-	if err := r.Run(":8080"); err != nil {
+	// 9. Start Server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	logger.InfoLogger.Println("Starting the server on port " + port + "...")
+	if err := r.Run(":" + port); err != nil {
 		logger.ErrorLogger.Fatalf("Server failed to start: %v", err)
 	}
 }
