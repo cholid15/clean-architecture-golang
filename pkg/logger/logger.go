@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	InfoLogger  *log.Logger
-	ErrorLogger *log.Logger
+	InfoLogger     *log.Logger
+	ErrorLogger    *log.Logger
+	FrontendLogger *log.Logger // tambah ini
 
 	currentDate string
 	logFile     *os.File
@@ -21,8 +22,9 @@ var (
 func Init() {
 	file := getLogFile()
 
-	InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime)
-	ErrorLogger = log.New(file, "ERROR: ", log.Ldate|log.Ltime)
+	InfoLogger = log.New(file, "[BACKEND] INFO: ", log.Ldate|log.Ltime)
+	ErrorLogger = log.New(file, "[BACKEND] ERROR: ", log.Ldate|log.Ltime)
+	FrontendLogger = log.New(file, "[FRONTEND] ", log.Ldate|log.Ltime) // tambah ini
 }
 
 func getLogFile() *os.File {
@@ -32,19 +34,16 @@ func getLogFile() *os.File {
 	now := time.Now()
 	date := now.Format("2006-01-02")
 
-	// Kalau masih hari yang sama, pakai file lama
 	if logFile != nil && date == currentDate {
 		return logFile
 	}
 
-	// Tutup file lama kalau sudah beda hari
 	if logFile != nil {
 		logFile.Close()
 	}
 
 	currentDate = date
 
-	// Path: internal/writable/logs/
 	logDir := filepath.Join("internal", "writable", "logs")
 	err := os.MkdirAll(logDir, os.ModePerm)
 	if err != nil {

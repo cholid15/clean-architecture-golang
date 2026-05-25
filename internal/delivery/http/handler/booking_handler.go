@@ -75,3 +75,12 @@ func (h *BookingHandler) Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "booking deleted"})
 }
+
+
+func (h *BookingHandler) RefreshStatus(c *gin.Context) {
+    if err := h.uc.RefreshAllStatus(); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, gin.H{"message": "status refreshed"})
+}

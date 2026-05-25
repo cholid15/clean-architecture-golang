@@ -1,0 +1,105 @@
+[BACKEND] INFO: 2026/05/25 10:24:49 Login success: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:24:49 POST /login | 200 | 73.7595ms
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /rooms/all | 200 | 535.3µs
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /profile | 200 | 1.6329ms
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /rooms/all | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /profile | 200 | 2.3461ms
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /profile | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /rooms/all | 200 | 2.2387ms
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /rooms/all | 200 | 1.5944ms
+[BACKEND] INFO: 2026/05/25 10:24:49 GET /profile | 200 | 2.1672ms
+[BACKEND] INFO: 2026/05/25 10:25:20 GET /display/rooms | 200 | 1.1146ms
+[BACKEND] INFO: 2026/05/25 10:25:20 GET /display/bookings | 200 | 508.9µs
+[BACKEND] INFO: 2026/05/25 10:25:32 POST /bookings | 201 | 11.6599ms
+[BACKEND] INFO: 2026/05/25 10:25:47 GET /rooms/all | 200 | 717.8µs
+[BACKEND] INFO: 2026/05/25 10:25:47 GET /profile | 200 | 1.2693ms
+[BACKEND] INFO: 2026/05/25 10:25:47 GET /rooms/all | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:25:47 GET /profile | 200 | 1.2304ms
+[BACKEND] INFO: 2026/05/25 10:25:50 GET /display/rooms | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:25:50 GET /display/bookings | 200 | 511.8µs
+[BACKEND] INFO: 2026/05/25 10:25:50 GET /display/rooms | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:25:50 GET /display/bookings | 200 | 507.6µs
+[BACKEND] INFO: 2026/05/25 10:25:53 GET /display/rooms | 200 | 574.7µs
+[BACKEND] INFO: 2026/05/25 10:25:53 GET /display/bookings | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:25:53 GET /display/rooms | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:25:53 GET /display/bookings | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:26:20 GET /display/bookings | 200 | 547µs
+[BACKEND] INFO: 2026/05/25 10:26:20 GET /display/rooms | 200 | 1.2352ms
+[BACKEND] INFO: 2026/05/25 10:26:53 GET /display/bookings | 200 | 994.3µs
+[BACKEND] INFO: 2026/05/25 10:26:53 GET /display/rooms | 200 | 1.5695ms
+[BACKEND] INFO: 2026/05/25 10:27:20 GET /display/rooms | 200 | 727.6µs
+[BACKEND] INFO: 2026/05/25 10:27:20 GET /display/bookings | 200 | 528.4µs
+[BACKEND] INFO: 2026/05/25 10:27:53 GET /display/rooms | 200 | 1.0009ms
+[BACKEND] INFO: 2026/05/25 10:27:53 GET /display/bookings | 200 | 698.5µs
+[BACKEND] INFO: 2026/05/25 10:28:20 GET /display/rooms | 200 | 1.8285ms
+[BACKEND] INFO: 2026/05/25 10:28:20 GET /display/bookings | 200 | 1.8285ms
+[BACKEND] INFO: 2026/05/25 10:28:53 GET /display/rooms | 200 | 509.9µs
+[BACKEND] INFO: 2026/05/25 10:28:53 GET /display/bookings | 200 | 509.9µs
+[BACKEND] INFO: 2026/05/25 10:29:20 GET /display/rooms | 200 | 1.076ms
+[BACKEND] INFO: 2026/05/25 10:29:20 GET /display/bookings | 200 | 563µs
+[BACKEND] INFO: 2026/05/25 10:29:53 GET /display/rooms | 200 | 1.0501ms
+[BACKEND] INFO: 2026/05/25 10:29:53 GET /display/bookings | 200 | 559.3µs
+[BACKEND] INFO: 2026/05/25 10:30:20 GET /display/rooms | 200 | 1.5103ms
+[BACKEND] INFO: 2026/05/25 10:30:20 GET /display/bookings | 200 | 2.1128ms
+[BACKEND] INFO: 2026/05/25 10:30:53 GET /display/bookings | 200 | 1.4091ms
+[BACKEND] INFO: 2026/05/25 10:30:53 GET /display/rooms | 200 | 2.9393ms
+[BACKEND] INFO: 2026/05/25 10:31:20 GET /display/rooms | 200 | 736.5µs
+[BACKEND] INFO: 2026/05/25 10:31:20 GET /display/bookings | 200 | 736.5µs
+[BACKEND] INFO: 2026/05/25 10:31:53 GET /display/bookings | 200 | 583.9µs
+[BACKEND] INFO: 2026/05/25 10:31:53 GET /display/rooms | 200 | 1.0949ms
+[BACKEND] INFO: 2026/05/25 10:32:20 GET /display/rooms | 200 | 1.5268ms
+[BACKEND] INFO: 2026/05/25 10:32:20 GET /display/bookings | 200 | 1.1217ms
+[BACKEND] INFO: 2026/05/25 10:32:53 GET /display/rooms | 200 | 814.1µs
+[BACKEND] INFO: 2026/05/25 10:32:53 GET /display/bookings | 200 | 1.3233ms
+[BACKEND] INFO: 2026/05/25 10:33:20 GET /display/bookings | 200 | 1.2412ms
+[BACKEND] INFO: 2026/05/25 10:33:20 GET /display/rooms | 200 | 1.7563ms
+[BACKEND] INFO: 2026/05/25 10:33:53 GET /display/rooms | 200 | 1.0111ms
+[BACKEND] INFO: 2026/05/25 10:33:53 GET /display/bookings | 200 | 1.5212ms
+[BACKEND] INFO: 2026/05/25 10:34:20 GET /display/rooms | 200 | 1.5095ms
+[BACKEND] INFO: 2026/05/25 10:34:20 GET /display/bookings | 200 | 2.0703ms
+[FRONTEND] 2026/05/25 10:34:30 INFO:  [AUTH] User logout: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:34:30 POST /logs | 200 | 0s
+[FRONTEND] 2026/05/25 10:34:44 INFO:  [AUTH] Mencoba login: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /logs | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:34:44 Login success: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /login | 200 | 76.6027ms
+[FRONTEND] 2026/05/25 10:34:44 INFO:  [AUTH] Login berhasil: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /logs | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:34:44 GET /rooms/all | 200 | 505.1µs
+[BACKEND] INFO: 2026/05/25 10:34:44 GET /profile | 200 | 1.7534ms
+[BACKEND] INFO: 2026/05/25 10:34:44 GET /rooms/all | 200 | 519.3µs
+[FRONTEND] 2026/05/25 10:34:44 INFO:  Berhasil fetch 1 ruangan
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /logs | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:34:44 GET /profile | 200 | 1.5024ms
+[FRONTEND] 2026/05/25 10:34:44 INFO:  [AUTH] Profil berhasil dimuat: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /logs | 200 | 0s
+[FRONTEND] 2026/05/25 10:34:44 INFO:  Berhasil fetch 1 ruangan
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /logs | 200 | 0s
+[FRONTEND] 2026/05/25 10:34:44 INFO:  [AUTH] Profil berhasil dimuat: herda@gmail.com
+[BACKEND] INFO: 2026/05/25 10:34:44 POST /logs | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:34:53 GET /display/rooms | 200 | 1.1608ms
+[BACKEND] INFO: 2026/05/25 10:34:53 GET /display/bookings | 200 | 1.2051ms
+[BACKEND] INFO: 2026/05/25 10:35:12 GET /display/rooms | 200 | 653.1µs
+[BACKEND] INFO: 2026/05/25 10:35:12 GET /display/bookings | 200 | 653.1µs
+[BACKEND] INFO: 2026/05/25 10:35:12 GET /display/rooms | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:35:12 GET /display/bookings | 200 | 508.8µs
+[BACKEND] INFO: 2026/05/25 10:35:20 GET /display/rooms | 200 | 1.2879ms
+[BACKEND] INFO: 2026/05/25 10:35:20 GET /display/bookings | 200 | 561µs
+[BACKEND] INFO: 2026/05/25 10:36:12 GET /display/rooms | 200 | 508.1µs
+[BACKEND] INFO: 2026/05/25 10:36:12 GET /display/bookings | 200 | 1.0346ms
+[FRONTEND] 2026/05/25 10:36:17 INFO:  Mencoba buat booking: ruang 2, dept Dakwah
+[BACKEND] INFO: 2026/05/25 10:36:17 POST /logs | 200 | 545.5µs
+[BACKEND] INFO: 2026/05/25 10:36:17 POST /bookings | 400 | 0s
+[FRONTEND] 2026/05/25 10:36:17 ERROR: Booking gagal: start_time harus sebelum end_time | data: {"room_id":"2","department":"Dakwah","start_time":"2026-05-26T10:08","end_time":"2026-05-25T12:11"}
+[BACKEND] INFO: 2026/05/25 10:36:17 POST /logs | 200 | 908µs
+[BACKEND] INFO: 2026/05/25 10:36:20 GET /display/rooms | 200 | 514.8µs
+[BACKEND] INFO: 2026/05/25 10:36:20 GET /display/bookings | 200 | 514.8µs
+[BACKEND] INFO: 2026/05/25 10:37:12 GET /display/bookings | 200 | 1.0197ms
+[BACKEND] INFO: 2026/05/25 10:37:12 GET /display/rooms | 200 | 868.6µs
+[BACKEND] INFO: 2026/05/25 10:37:20 GET /display/rooms | 200 | 508.8µs
+[BACKEND] INFO: 2026/05/25 10:37:20 GET /display/bookings | 200 | 508.8µs
+[FRONTEND] 2026/05/25 10:37:25 INFO:  Mencoba buat booking: ruang 2, dept Dakwah
+[BACKEND] INFO: 2026/05/25 10:37:25 POST /logs | 200 | 0s
+[BACKEND] INFO: 2026/05/25 10:37:25 POST /bookings | 400 | 1.8585ms
+[FRONTEND] 2026/05/25 10:37:25 ERROR: Booking gagal: ruangan sudah dibooking di waktu tersebut | data: {"room_id":"2","department":"Dakwah","start_time":"2026-05-25T10:08","end_time":"2026-05-25T12:11"}
+[BACKEND] INFO: 2026/05/25 10:37:25 POST /logs | 200 | 0s

@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
-	// logger
 	"clean/pkg/logger"
 )
 
@@ -36,8 +35,7 @@ func main() {
 	// 4. Initialize Gin Engine
 	r := gin.Default()
 
-	// 5. GLOBAL MIDDLEWARE (Sangat Penting: Taruh di atas sebelum route)
-	// Memastikan semua request (termasuk OPTIONS/Preflight) diizinkan
+	// 5. GLOBAL MIDDLEWARE
 	r.Use(middleware.CORSMiddleware())
 	r.Use(middleware.LoggerMiddleware())
 
@@ -47,10 +45,9 @@ func main() {
 	authUC := usecase.NewAuthUsecase(userRepo, jwtSecret)
 
 	// 7. PUBLIC ROUTES
-	// Register Auth Handler (Login, Register, dsb)
 	handler.NewAuthHandler(r, authUC)
 
-	// 8. PROTECTED ROUTES (Membutuhkan JWT)
+	// 8. PROTECTED ROUTES
 	userHandler := handler.NewUserHandler(r, userRepo)
 	r.GET("/profile",
 		middleware.JWTMiddleware(jwtSecret),
@@ -64,6 +61,23 @@ func main() {
 	roomUC := usecase.NewRoomUsecase(roomRepo)
 	roomHandler := handler.NewRoomHandler(roomUC)
 
+	// =========================
+	// BOOKING MODULE
+	// =========================
+	bookingRepo := pgsql.NewBookingRepo(db)
+	bookingUC := usecase.NewBookingUsecase(bookingRepo)
+	bookingHandler := handler.NewBookingHandler(bookingUC)
+
+	// =========================
+	// PUBLIC ROUTES FOR DISPLAY (Tanpa JWT)
+	// =========================
+	r.GET("/display/rooms", roomHandler.GetAllDisplay)
+	r.GET("/display/bookings", bookingHandler.GetAll)
+	r.POST("/logs", handler.HandleFrontendLog) 
+
+	// =========================
+	// PROTECTED ROOM ROUTES
+	// =========================
 	room := r.Group("/rooms", middleware.JWTMiddleware(jwtSecret))
 	{
 		room.POST("", roomHandler.Create)
@@ -73,18 +87,15 @@ func main() {
 	}
 
 	// =========================
-	// BOOKING MODULE
+	// PROTECTED BOOKING ROUTES
 	// =========================
-	bookingRepo := pgsql.NewBookingRepo(db)
-	bookingUC := usecase.NewBookingUsecase(bookingRepo)
-	bookingHandler := handler.NewBookingHandler(bookingUC)
-
 	booking := r.Group("/bookings", middleware.JWTMiddleware(jwtSecret))
 	{
 		booking.POST("", bookingHandler.Create)
 		booking.GET("all", bookingHandler.GetAll)
 		booking.PUT("/:id", bookingHandler.Update)
 		booking.DELETE("/:id", bookingHandler.Delete)
+		booking.POST("/refresh-status", bookingHandler.RefreshStatus)
 	}
 
 	// 9. Start Server
@@ -92,7 +103,6 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-
 	logger.InfoLogger.Println("Starting the server on port " + port + "...")
 	if err := r.Run(":" + port); err != nil {
 		logger.ErrorLogger.Fatalf("Server failed to start: %v", err)

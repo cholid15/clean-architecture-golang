@@ -9,5 +9,6 @@ type Booking struct {
 	ParticipantCount int       `db:"participant_count" json:"participant_count"`
 	StartTime        time.Time `db:"start_time" json:"start_time"`
 	EndTime          time.Time `db:"end_time" json:"end_time"`
+	Status           string    `db:"status" json:"status"`
 	CreatedAt        time.Time `db:"created_at" json:"created_at"`
 }

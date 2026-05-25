@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Display from "./pages/Display";
 
 // Komponen untuk memproteksi halaman yang butuh login
 function ProtectedRoute({ children }) {
@@ -36,7 +37,6 @@ function App() {
             )
           }
         />
-
         {/* Halaman Dashboard (Terproteksi) */}
         <Route
           path="/dashboard"
@@ -46,6 +46,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Halaman TV Display (Public - tanpa login) */}
+        <Route path="/display" element={<Display />} />
 
         {/* Redirect otomatis dari "/" ke "/dashboard" */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -1,6 +1,9 @@
 package repository
 
-import "clean/internal/entity"
+import (
+	"clean/internal/entity"
+	"time"
+)
 
 type BookingRepo interface {
 	GetAll() ([]*entity.Booking, error)
@@ -8,4 +11,6 @@ type BookingRepo interface {
 	Create(*entity.Booking) error
 	Update(*entity.Booking) error
 	Delete(id int) error
+	RefreshAllStatus() error
+	IsConflict(roomID int, start, end time.Time, excludeID int) (bool, error)
 }

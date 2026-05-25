@@ -1,29 +1,37 @@
-import { useState } from 'react';
-import axios from 'axios';
-import './Login.css';
+import { useState } from "react";
+import axios from "axios";
+import "./Login.css";
+import logger from "../utils/logger";
 
 function Login({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
+    logger.auth(`Mencoba login: ${email}`);
+
     try {
-      const response = await axios.post('http://localhost:8080/login', {
+      const response = await axios.post("http://localhost:8080/login", {
         email,
         password,
       });
-
       const token = response.data.token;
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
+
+      logger.auth(`Login berhasil: ${email}`);
+
       onLogin(token);
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      const errMsg = err.response?.data?.error || "Login failed";
+      setError(errMsg);
+
+      logger.error(`Login gagal: ${email}`, errMsg);
     } finally {
       setLoading(false);
     }
@@ -56,7 +64,7 @@ function Login({ onLogin }) {
           </div>
           {error && <div className="error-message">{error}</div>}
           <button type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
