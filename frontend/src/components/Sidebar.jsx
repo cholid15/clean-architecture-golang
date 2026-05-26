@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 function Sidebar({ activePage, onNavigate, user, onLogout }) {
+  const [hoveredKey, setHoveredKey] = useState(null);
+
   const menuItems = [
     { key: "overview", label: "Overview", icon: "🏠" },
     { key: "booking", label: "Booking", icon: "📅" },
@@ -19,15 +23,24 @@ function Sidebar({ activePage, onNavigate, user, onLogout }) {
           <button
             key={item.key}
             onClick={() => onNavigate(item.key)}
+            onMouseEnter={() => setHoveredKey(item.key)}
+            onMouseLeave={() => setHoveredKey(null)}
             style={{
               ...styles.menuItem,
               backgroundColor:
-                activePage === item.key ? "#e8f4fd" : "transparent",
-              color: activePage === item.key ? "#007bff" : "#495057",
-              fontWeight: activePage === item.key ? "600" : "400",
+                activePage === item.key
+                  ? "rgba(255,255,255,0.15)"
+                  : hoveredKey === item.key
+                    ? "rgba(255,255,255,0.08)"
+                    : "transparent",
+              color: "white",
+              fontWeight:
+                activePage === item.key || hoveredKey === item.key
+                  ? "700"
+                  : "400",
               borderLeft:
                 activePage === item.key
-                  ? "3px solid #007bff"
+                  ? "3px solid white"
                   : "3px solid transparent",
             }}
           >
@@ -37,13 +50,13 @@ function Sidebar({ activePage, onNavigate, user, onLogout }) {
         ))}
       </nav>
 
-      {/* User Info & Logout di bawah */}
+      {/* User Info & Logout */}
       <div style={styles.bottomSection}>
         <div style={styles.userInfo}>
           <div style={styles.userAvatar}>
             {user.username ? user.username[0].toUpperCase() : "U"}
           </div>
-          <div>
+          <div style={styles.userTextWrap}>
             <div style={styles.userName}>{user.username || "User"}</div>
             <div style={styles.userEmail}>{user.email}</div>
           </div>
@@ -58,10 +71,9 @@ function Sidebar({ activePage, onNavigate, user, onLogout }) {
 
 const styles = {
   sidebar: {
-    width: "240px",
+    width: "220px",
     minHeight: "100vh",
-    backgroundColor: "#ffffff",
-    boxShadow: "2px 0 8px rgba(0,0,0,0.08)",
+    background: "linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%)",
     display: "flex",
     flexDirection: "column",
     position: "fixed",
@@ -70,85 +82,93 @@ const styles = {
     bottom: 0,
   },
   logo: {
-    padding: "24px 20px",
-    borderBottom: "1px solid #f0f0f0",
+    padding: "20px 16px",
+    borderBottom: "1px solid rgba(255,255,255,0.15)",
   },
   logoText: {
-    fontSize: "18px",
+    fontSize: "16px",
     fontWeight: "700",
-    color: "#007bff",
+    color: "white",
   },
   logoSub: {
-    fontSize: "12px",
-    color: "#6c757d",
+    fontSize: "11px",
+    color: "rgba(255,255,255,0.7)",
     marginTop: "2px",
   },
   nav: {
-    padding: "16px 0",
+    padding: "12px 0",
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    gap: "4px",
+    gap: "2px",
   },
   menuItem: {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
-    padding: "12px 20px",
+    gap: "10px",
+    padding: "10px 16px",
     border: "none",
     cursor: "pointer",
     fontSize: "14px",
     textAlign: "left",
     width: "100%",
-    transition: "all 0.2s ease",
-    borderRadius: "0",
+    transition: "all 0.15s ease",
   },
   menuIcon: {
-    fontSize: "18px",
-    width: "24px",
+    fontSize: "16px",
+    width: "20px",
     textAlign: "center",
+    flexShrink: 0,
   },
   bottomSection: {
-    padding: "16px 20px",
-    borderTop: "1px solid #f0f0f0",
+    padding: "14px 16px",
+    borderTop: "1px solid rgba(255,255,255,0.15)",
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    gap: "10px",
   },
   userInfo: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
+    gap: "8px",
   },
   userAvatar: {
-    width: "36px",
-    height: "36px",
+    width: "32px",
+    height: "32px",
     borderRadius: "50%",
-    backgroundColor: "#007bff",
+    backgroundColor: "rgba(255,255,255,0.2)",
     color: "white",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontWeight: "700",
-    fontSize: "14px",
+    fontSize: "13px",
     flexShrink: 0,
+  },
+  userTextWrap: {
+    overflow: "hidden",
   },
   userName: {
     fontSize: "13px",
     fontWeight: "600",
-    color: "#343a40",
+    color: "white",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   userEmail: {
     fontSize: "11px",
-    color: "#6c757d",
-    wordBreak: "break-all",
+    color: "rgba(255,255,255,0.7)",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   logoutBtn: {
     width: "100%",
-    padding: "8px",
-    backgroundColor: "#fff",
-    color: "#dc3545",
-    border: "1px solid #dc3545",
+    padding: "7px",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    color: "white",
+    border: "1px solid rgba(255,255,255,0.3)",
     borderRadius: "4px",
     cursor: "pointer",
     fontSize: "13px",

@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import logger from "../utils/logger";
 import Sidebar from "../components/Sidebar";
 import PageOverview from "../components/PageOverview";
+import PageBooking from "../components/PageBooking";
 import PageRuangan from "../components/PageRuangan";
+import Toast from "../components/Toast";
 
 function Dashboard({ onLogout }) {
   const token = localStorage.getItem("token");
@@ -12,6 +14,7 @@ function Dashboard({ onLogout }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activePage, setActivePage] = useState("overview");
+  const [toasts, setToasts] = useState([]);
 
   const [bookingData, setBookingData] = useState({
     room_id: "",
@@ -21,29 +24,40 @@ function Dashboard({ onLogout }) {
     end_time: "",
   });
 
-  const fetchRooms = async () => {
+  const showToast = useCallback((message, type = "info") => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  }, []);
+
+  const removeToast = useCallback((id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const fetchRooms = useCallback(async () => {
     try {
       const res = await axios.get("http://localhost:8080/rooms/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRooms(res.data);
-      logger.info(`Berhasil fetch ${res.data.length} ruangan`);
+      setRooms(Array.isArray(res.data) ? res.data : []);
+      logger.info(`Berhasil fetch ${res.data?.length ?? 0} ruangan`);
     } catch (err) {
+      setRooms([]);
       logger.error("Gagal mengambil data ruangan", err.message);
     }
-  };
+  }, [token]);
 
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       const res = await axios.get("http://localhost:8080/bookings/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setBookings(res.data);
-      logger.info(`Berhasil fetch ${res.data.length} booking`);
+      setBookings(Array.isArray(res.data) ? res.data : []);
+      logger.info(`Berhasil fetch ${res.data?.length ?? 0} booking`);
     } catch (err) {
+      setBookings([]);
       logger.error("Gagal mengambil data booking", err.message);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -63,7 +77,7 @@ function Dashboard({ onLogout }) {
       fetchRooms();
       fetchBookings();
     }
-  }, [token]);
+  }, [token, fetchRooms, fetchBookings]);
 
   const handleBooking = async (e) => {
     e.preventDefault();
@@ -85,8 +99,8 @@ function Dashboard({ onLogout }) {
       logger.info(
         `Booking berhasil: ruang ${bookingData.room_id}, dept ${bookingData.department}`,
       );
+      showToast("Booking berhasil dibuat!", "success");
       await fetchBookings();
-      alert("Booking Berhasil!");
       setBookingData({
         room_id: "",
         department: "",
@@ -97,7 +111,7 @@ function Dashboard({ onLogout }) {
     } catch (err) {
       const errMsg = err.response?.data?.error || "Gagal menyimpan booking";
       logger.error(`Booking gagal: ${errMsg}`);
-      alert("Error: " + errMsg);
+      showToast(errMsg, "error");
     } finally {
       setLoading(false);
     }
@@ -117,8 +131,30 @@ function Dashboard({ onLogout }) {
 
       case "booking":
         return (
+          <PageBooking
+            bookings={bookings}
+            rooms={rooms}
+            token={token}
+            onBookingChange={fetchBookings}
+            onNavigate={setActivePage}
+            showToast={showToast}
+          />
+        );
+
+      case "booking-form":
+        return (
           <div style={styles.card}>
-            <h2 style={styles.cardTitle}>Buat Reservasi Baru</h2>
+            {/* Header form — tombol Kembali + judul */}
+            <div style={styles.formHeader}>
+              <button
+                onClick={() => setActivePage("booking")}
+                style={styles.btnBack}
+              >
+                ← Kembali
+              </button>
+              <h2 style={styles.cardTitle}>Buat Reservasi Baru</h2>
+            </div>
+
             <form
               onSubmit={handleBooking}
               style={{ display: "grid", gap: "1.2rem", marginTop: "1.5rem" }}
@@ -210,24 +246,33 @@ function Dashboard({ onLogout }) {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  ...styles.btnPrimary,
-                  backgroundColor: loading ? "#6c757d" : "#28a745",
-                  cursor: loading ? "not-allowed" : "pointer",
-                }}
-              >
-                {loading ? "Menyimpan..." : "Konfirmasi Booking"}
-              </button>
+              {/* Tombol submit — tidak full width */}
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    ...styles.btnSubmit,
+                    backgroundColor: loading ? "#6c757d" : "#28a745",
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.8 : 1,
+                  }}
+                >
+                  {loading ? "Menyimpan..." : "Konfirmasi Booking"}
+                </button>
+              </div>
             </form>
           </div>
         );
 
       case "ruangan":
         return (
-          <PageRuangan rooms={rooms} token={token} onRoomsChange={fetchRooms} />
+          <PageRuangan
+            rooms={rooms}
+            token={token}
+            onRoomsChange={fetchRooms}
+            showToast={showToast}
+          />
         );
 
       default:
@@ -244,6 +289,7 @@ function Dashboard({ onLogout }) {
         onLogout={logoutAction}
       />
       <main style={styles.main}>{renderContent()}</main>
+      <Toast toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }
@@ -256,7 +302,7 @@ const styles = {
     fontFamily: "sans-serif",
   },
   main: {
-    marginLeft: "240px",
+    marginLeft: "220px",
     flex: 1,
     padding: "32px",
   },
@@ -266,10 +312,30 @@ const styles = {
     borderRadius: "8px",
     boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
   },
+  formHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    borderBottom: "2px solid #eee",
+    paddingBottom: "12px",
+    marginBottom: "8px",
+  },
+  btnBack: {
+    padding: "6px 14px",
+    backgroundColor: "#6c757d",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "13px",
+    fontWeight: "500",
+    whiteSpace: "nowrap",
+    width: "auto", // tidak full width
+    flexShrink: 0,
+  },
   cardTitle: {
     marginTop: 0,
-    borderBottom: "2px solid #eee",
-    paddingBottom: "0.5rem",
+    marginBottom: 0,
     fontSize: "18px",
     fontWeight: "600",
     color: "#343a40",
@@ -294,13 +360,15 @@ const styles = {
     gridTemplateColumns: "1fr 1fr",
     gap: "1rem",
   },
-  btnPrimary: {
-    padding: "1rem",
+  btnSubmit: {
+    padding: "10px 28px",
     color: "white",
     border: "none",
     borderRadius: "4px",
-    fontWeight: "bold",
-    fontSize: "1rem",
+    fontWeight: "600",
+    fontSize: "14px",
+    width: "auto", // tidak full width
+    display: "inline-block",
   },
 };
 

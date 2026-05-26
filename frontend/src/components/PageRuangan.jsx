@@ -33,7 +33,6 @@ function PageRuangan({ rooms, token, onRoomsChange }) {
         name: formData.name,
         capacity: parseInt(formData.capacity),
       };
-
       if (editId) {
         await axios.put(`http://localhost:8080/rooms/${editId}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,7 +44,6 @@ function PageRuangan({ rooms, token, onRoomsChange }) {
         });
         logger.info(`Ruangan ditambah: ${formData.name}`);
       }
-
       await onRoomsChange();
       resetForm();
       alert(
@@ -78,9 +76,10 @@ function PageRuangan({ rooms, token, onRoomsChange }) {
 
   return (
     <div>
+      {/* Header */}
       <div style={styles.pageHeader}>
         <h2 style={styles.pageTitle}>Manajemen Ruangan</h2>
-        <button onClick={handleTambah} style={styles.btnPrimary}>
+        <button onClick={handleTambah} style={styles.btnTambah}>
           + Tambah Ruangan
         </button>
       </div>
@@ -120,20 +119,16 @@ function PageRuangan({ rooms, token, onRoomsChange }) {
               />
             </div>
             <div style={styles.formActions}>
-              <button
-                type="button"
-                onClick={resetForm}
-                style={styles.btnSecondary}
-              >
+              <button type="button" onClick={resetForm} style={styles.btnBatal}>
                 Batal
               </button>
               <button
                 type="submit"
                 disabled={loading}
                 style={{
-                  ...styles.btnPrimary,
-                  cursor: loading ? "not-allowed" : "pointer",
+                  ...styles.btnSimpan,
                   opacity: loading ? 0.7 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
                 }}
               >
                 {loading
@@ -177,13 +172,13 @@ function PageRuangan({ rooms, token, onRoomsChange }) {
                         onClick={() => handleEdit(room)}
                         style={styles.btnEdit}
                       >
-                        Edit
+                        ✏️ Edit
                       </button>
                       <button
                         onClick={() => handleDelete(room)}
                         style={styles.btnDelete}
                       >
-                        Hapus
+                        🗑️ Hapus
                       </button>
                     </div>
                   </td>
@@ -210,6 +205,19 @@ const styles = {
     fontSize: "22px",
     fontWeight: "700",
     color: "#343a40",
+  },
+  btnTambah: {
+    padding: "8px 16px",
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    whiteSpace: "nowrap",
+    width: "auto", // fix: tidak full width
+    display: "inline-block",
   },
   card: {
     backgroundColor: "white",
@@ -241,34 +249,34 @@ const styles = {
   },
   input: {
     width: "100%",
-    padding: "0.7rem",
+    padding: "8px 12px",
     borderRadius: "4px",
     border: "1px solid #ced4da",
     boxSizing: "border-box",
     fontSize: "14px",
+    color: "#343a40",
   },
   formActions: {
     display: "flex",
-    gap: "12px",
+    gap: "10px",
   },
-  btnPrimary: {
-    padding: "8px 20px",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-  },
-  btnSecondary: {
-    padding: "8px 20px",
+  btnBatal: {
+    padding: "8px 16px",
     backgroundColor: "white",
-    color: "#6c757d",
+    color: "#ffffff",
     border: "1px solid #ced4da",
     borderRadius: "4px",
     cursor: "pointer",
     fontSize: "14px",
+  },
+  btnSimpan: {
+    padding: "8px 16px",
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    fontSize: "14px",
+    fontWeight: "500",
   },
   table: {
     width: "100%",
@@ -300,24 +308,26 @@ const styles = {
     gap: "8px",
   },
   btnEdit: {
-    padding: "4px 12px",
+    padding: "5px 12px",
     backgroundColor: "#ffc107",
-    color: "#343a40",
+    color: "white", // fix: font putih
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
     fontSize: "13px",
-    fontWeight: "500",
+    fontWeight: "600",
+    whiteSpace: "nowrap",
   },
   btnDelete: {
-    padding: "4px 12px",
+    padding: "5px 12px",
     backgroundColor: "#dc3545",
     color: "white",
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
     fontSize: "13px",
-    fontWeight: "500",
+    fontWeight: "600",
+    whiteSpace: "nowrap",
   },
   emptyState: {
     textAlign: "center",

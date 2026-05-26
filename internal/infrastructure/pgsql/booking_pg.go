@@ -17,9 +17,12 @@ func NewBookingRepo(db *sqlx.DB) repository.BookingRepo {
 }
 
 func (b *bookingRepo) GetAll() ([]*entity.Booking, error) {
-	var bookings []*entity.Booking
-	err := b.db.Select(&bookings, `SELECT * FROM bookings ORDER BY start_time`)
-	return bookings, err
+    var bookings []*entity.Booking
+    err := b.db.Select(&bookings, `SELECT * FROM bookings ORDER BY start_time`)
+    if bookings == nil {
+        bookings = []*entity.Booking{} // pastikan return [] bukan null
+    }
+    return bookings, err
 }
 
 func (b *bookingRepo) GetById(id int) (*entity.Booking, error) {

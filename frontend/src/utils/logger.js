@@ -2,12 +2,12 @@ const API_BASE = "http://localhost:8080";
 
 const sendLog = async (level, message, data = null) => {
   // Tetap tampil di browser console untuk development
-  if (level === "error")
-    console.error(`[FRONTEND][${level.toUpperCase()}] ${message}`, data ?? "");
-  else if (level === "warn")
-    console.warn(`[FRONTEND][${level.toUpperCase()}] ${message}`, data ?? "");
-  else
-    console.info(`[FRONTEND][${level.toUpperCase()}] ${message}`, data ?? "");
+  // if (level === "error")
+  //   console.error(`[FRONTEND][${level.toUpperCase()}] ${message}`, data ?? "");
+  // else if (level === "warn")
+  //   console.warn(`[FRONTEND][${level.toUpperCase()}] ${message}`, data ?? "");
+  // else
+  //   console.info(`[FRONTEND][${level.toUpperCase()}] ${message}`, data ?? "");
 
   // Kirim ke backend agar tersimpan di file log
   try {
